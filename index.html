@@ -33,16 +33,21 @@
       margin-left: 2em;
     }
     .main-wrapper{
-      border-style: solid;
-      border-color:#5DE0E6;
-      border-radius: 5em;
-      width: 20em;
-      height: 20em;
-      padding: 2em;
-      margin: auto;
+   
+      width:90%;
+      margin:auto;
+      margin-top:3em;
     }
     .btn-aqua{
       background-color: #5DE0E6;
+    }
+    .btn-aqua:hover{
+      background-color:black;
+      border-color: #5DE0E6;
+      color:#5DE0E6;
+    }
+    .make-it-bigger{
+      font-size: 1.2em;
     }
     .btn-outline-darkaqua{
       color: #49b4b9;
@@ -51,6 +56,33 @@
     .btn-outline-darkaqua:hover{
       color: white;
       background-color: #49b4b9;
+    }
+    .btn-lightaqua{
+      color:#49b4b9;
+      font-size: 1em;
+    }
+    .project-container{
+      margin-top: 1em;
+      height: 15em;
+   
+    }
+    .project-card{
+      background-color: #c7f0f2;
+      border-width: .5px;
+      box-shadow: 5px 10px 10px #c1d5d6;
+    }
+    .project-title {
+      padding: 0em 0.5em;
+    }
+    .project-body {
+      padding: 0em 3em;
+    }
+    .divider{
+      margin-top: 1em;
+      margin-bottom: 1em;
+    }
+    .project-card-list li {
+      display:inline;
     }
   </style>
 
@@ -101,19 +133,188 @@
             </form>
           </div>
         </nav>
-
+        <!--Main Wrapper -->
         <div class="main-wrapper">
-
+            <button class="btn btn-aqua" data-toggle="modal" data-target="#new-project-form-modal">New Project <span class="make-it-bigger">+</span> </button>
+            <!-- Project Container -->
+            <h2 class="divider">Your Projects:</h2>
+            <div class="project-container">
+              <div class="project-card">
+                <div class="project-title">
+                  <ul class="project-card-list">
+                    <li><strong> Project Name</strong></li>
+                    <li><button class="btn btn-lightaqua">✎</button></li>
+                    <li style="margin-left:2em;"> Due Date: Jan 1, 2021 </li>
+                    <li style="float: right;">
+                      <a class="btn"  data-toggle="collapse" href="#collapsediv" role="button" aria-expanded="false" aria-controls="collapsediv">⌄</a>
+                    </li>
+                  </ul>
+                </div>
+                <divs id="collapsediv">
+                  <hr>
+                  <div class="project-body">
+                    <h4 class="divider">Project Team Members:</h4>
+                      <form class="form-inline">
+                        <div class="form-group mb-2">
+                          <select class="form-control" id="memeber">
+                            <option>Default select There is a lot to see </option>
+                          </select>
+                        </div>
+                        <div class="form-group mx-sm-3 mb-2">
+                         
+                        </div>
+                        <button type="submit" class="btn btn-aqua mb-2">Add Member</button>
+                      </form>
+                  </div>
+                </divs>
+              </div>
+            </div>
         </div>
       </main>
   </div>
+  <!-- New Project Form -->
+  <div class="modal fade" id="new-project-form-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLongTitle">Create a new Project</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form id="new-project-form">
+            <div class="form-group">
+              <label for="exampleInputEmail1">Project Name</label>
+              <input type="text" name ="name" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter Project's name">
+            </div>
+            <div class="form-group">
+              <label for="exampleInputEmail1">Project Deadline</label>
+              <input type="text" name ="deadline" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter Project's deadline">
+            </div>
+    
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-aqua" id="add-project">Add Project</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
   <script src="./src/index.js"></script>
   <script>
+    const BASE_URL = "http://localhost:3000/"
+    const PROJECTS_URL = `${BASE_URL}/projects`
+    const MEMBERS_URL = `${BASE_URL}/members`
+
     document.addEventListener("DOMContentLoaded",()=>{
+      loadDashboard();
+      addSubmitEvents();
+      addClickEvents();
+      loadMemberOptions();
+    })
+
+    function loadDashboard(){
+      fetch(PROJECTS_URL)
+      .then(resp=>resp.json())
+      .then(projects=>renderProjectDivs(projects) )
+      .catch(err => console.log(err))
+    }
+
+    function loadMemberOptions(){
+      fetch(MEMBERS_URL)
+      .then(resp=>resp.json())
+      .then(members=>renderMemberOptions(members))
+      .catch(err => console.log(err))
+    }
+
+    function renderMemberOptions(members){
+
+    }
+
+    function renderProjectDivs(projects){
+      projects.forEach(project =>{
+        renderProjectDiv(project)
+      })
+    }
+
+    function renderProjectDiv(project){
+        let divContainer = document.querySelector(".project-container")
+        const div = ` <div class="project-card">
+                      <div class="project-title">
+                        <ul class="project-card-list">
+                          <li class="col-4"><strong>${project.name}</strong></li>
+                          <li><button class="btn btn-lightaqua" data-project-id=${project.id}>✎</button></li>
+                          <li style="margin-left:2em;"> Due Date: ${project.deadline} </li>
+                          <li style="float: right;"><a class="btn" href="#" data-project-id=${project.id}>⌄</a></li>
+                        </ul>
+                      </div>
+                    </div>`;
+        divContainer.insertAdjacentHTML("afterbegin",div)
+      }
+
+    // function renderProjectDivs(projects){
+    //   let divContainer = document.querySelector(".project-container")
+    //   projects.forEach(project => {
+    //     divContainer.insertAdjacentHTML("before",createProjectDiv(project))
+    //   });
+    // }
+    // function createProjectDiv(project){
+    //   const div = ` <div class="project-card">
+    //                   <div class="project-title">
+    //                     <ul class="project-card-list">
+    //                       <li><strong>${project.name}</strong></li>
+    //                       <li><button class="btn btn-lightaqua" data-project-id=${project.id}>✎</button></li>
+    //                       <li style="margin-left:2em;"> Due Date: ${project.deadline} </li>
+    //                       <li style="float: right;"><a class="btn" href="#" data-project-id=${project.id}>⌄</a></li>
+    //                     </ul>
+    //                   </div>
+    //                 </div>`;
+    //   return div 
+
+    // }
+    function createObject(data,method){
+      const object = {
+        method:method,
+        headers:{
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        }
+      }
+      if(!this.isEmpty(data)){
+        object["body"]= JSON.stringify(data)
+      }
+      return object
+    }
+
+    function isEmpty(obj) {
+      return Object.keys(obj).length === 0;
+    }
+
+    function addClickEvents(){
+      document.querySelector("#add-project").addEventListener("click",e=>{
+        const form =  document.querySelector("#new-project-form")
+        const name = form.name.value;
+        const deadline =  form.deadline.value;
+        serverData = createObject({name,deadline},"POST")
+        fetch(PROJECTS_URL,serverData)
+        .then(resp=>resp.json())
+        .then(project => {
+          renderProjectDiv(project)
+          $('#new-project-form-modal').modal('hide')
+        })
+        .catch(err=> console.log(err))
+      })
+    }
+
+    function addSubmitEvents(){
       document.querySelector("#login-form").addEventListener("submit",e=>{
         e.preventDefault();
         document.querySelector("div.login-wrapper").classList.toggle("d-none")
@@ -125,7 +326,8 @@
         document.querySelector("div.login-wrapper").classList.toggle("d-none")
         document.querySelector("main").classList.toggle("d-none")
       })
-    })
+    }
+
   </script>
 </body>
 
