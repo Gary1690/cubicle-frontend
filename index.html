@@ -487,7 +487,7 @@
                               <button type="submit" class="btn btn-aqua mb-2">Add to Team</button>
                             </form>
                             <div class="member-cards-container" data-project-id-team-members="${project.id}">
-                              ${renderExistingTeamMembers(project.members)}
+                              ${renderExistingTeamMembers(project.members,project.id)}
                             </div>
                         </div>
                       </div>
@@ -495,10 +495,10 @@
         divContainer.insertAdjacentHTML("afterbegin",div)
       }
     
-    function renderExistingTeamMembers(members){
+    function renderExistingTeamMembers(members,projectId){
       let memberCards="";
       members.forEach(member=>{
-        const memberCard = `<div class="member-card">
+        const memberCard = `<div class="member-card" id="team-member-${member.id}-${projectId}">
                             <div class="member-img">
                                 <img src="${member.image_url}" alt="${member.name}">
                             </div>
@@ -514,7 +514,7 @@
     function renderNewTeamMember(team_member){
       const member =  team_member.member
       const project =  team_member.project
-      const newMemberCard = `<div class="member-card">
+      const newMemberCard = `<div class="member-card" id="team-member-${member.id}-${project.id}">
                                 <div class="member-img">
                                     <img src="${member.image_url}" alt="${member.name}">
                                 </div>
@@ -625,7 +625,14 @@
           const serverData = createObject({project_id:projectId,member_id:memberId},"POST")
           fetch(TEAM_MEMBERS_URL,serverData)
           .then(resp => resp.json())
-          .then(team_member => renderNewTeamMember(team_member))          
+          .then(team_member => {
+              const element = document.querySelector(`#team-member-${team_member.member.id}-${team_member.project.id}`)
+              if (!!element){
+                alert(`${team_member.member.name} has already been added to this project`)
+              }else{
+                renderNewTeamMember(team_member)
+              }
+            })          
         }
       })
     }
