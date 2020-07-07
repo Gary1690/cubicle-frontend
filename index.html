@@ -309,6 +309,14 @@
       return Object.keys(obj).length === 0;
     }
 
+    function renderMemberOptionsForNewProject(projectId){
+      const select = document.querySelector(`select[data-project-id="${projectId}"]`)
+      fetch(MEMBERS_URL)
+      .then(resp=>resp.json())
+      .then(members=>renderMemberOption(members,select))
+      .catch(err => console.log(err))
+    }
+
     function addClickEvents(){
       document.querySelector("#add-project").addEventListener("click",e=>{
         const form =  document.querySelector("#new-project-form")
@@ -319,6 +327,7 @@
         .then(resp=>resp.json())
         .then(project => {
           renderProjectDiv(project)
+          renderMemberOptionsForNewProject(project.id)
           $('#new-project-form-modal').modal('hide')
         })
         .catch(err=> console.log(err))
