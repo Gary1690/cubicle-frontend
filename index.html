@@ -321,7 +321,10 @@
                             </div>
                           </div>
                         </div>
-                      </div>
+                    </div>
+                    <div class="task-wrapper">
+
+                    </div>
                   </div>
                 </div>
               </div>
@@ -452,7 +455,7 @@
         const div = ` <div class="project-card">
                       <div class="project-title">
                         <ul class="project-card-list">
-                          <li class="col-4"><strong>${project.name}</strong></li>
+                          <li class="col-4"><strong class="project-name">${project.name}</strong></li>
                           <li><button class="btn btn-lightaqua btn-edit-project" 
                           data-project-id="${project.id}"
                           data-project-name = "${project.name}"
@@ -460,7 +463,7 @@
                           data-toggle="modal"
                           data-target ="#edit-project-form-modal"
                           >✎</button></li>
-                          <li style="margin-left:2em;"> Due Date: ${project.deadline} </li>
+                          <li style="margin-left:2em;"> Due Date: <span class="project-deadline">${project.deadline}<span></li>
                           <li style="float: right;">
                           <a class="btn" data-project-id=${project.id}  data-toggle="collapse" href="#collapsediv${project.id}" role="button" aria-expanded="false" aria-controls="collapsediv">
                           ⌄
@@ -565,6 +568,7 @@
         .catch(err=> console.log(err))
       })
 
+      
       document.addEventListener("click",e=>{
         if(e.target.classList.contains("btn-edit-project")){
           const projectId = e.target.dataset.projectId
@@ -575,6 +579,27 @@
           form.deadline.value = deadline
           form.dataset.projectId = projectId
         }
+        if(e.target.id ==="edit-project"){
+          const myForm = document.querySelector("#edit-project-form")
+          const newName = myForm.name.value
+          const newDeadline = myForm.deadline.value 
+          const projectId = myForm.dataset.projectId
+          const serverData = createObject({name:newName,deadline:newDeadline},"PATCH")
+          fetch(`${PROJECTS_URL}/${projectId}`,serverData)
+          .then(resp => resp.json())
+          .then(project => {
+              const projectNameStrongTag = document.querySelector(`button[data-project-id="${project.id}"]`)
+                                                    .closest("ul").querySelector(".project-name")
+              const projectDeadlineSpanTag = document.querySelector(`button[data-project-id="${project.id}"]`)
+                                                    .closest("ul").querySelector(".project-deadline")
+
+              projectNameStrongTag.textContent = project.name
+              projectDeadlineSpanTag.textContent = project.deadline
+              $('#edit-project-form-modal').modal('hide')
+            })
+          .catch(err => console.log(err))
+        }
+
       })
     }
 
