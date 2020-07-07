@@ -70,6 +70,7 @@
       background-color: #c7f0f2;
       border-width: .5px;
       box-shadow: 5px 10px 10px #c1d5d6;
+      margin-top: 1em;
     }
     .project-title {
       padding: 0em 0.5em;
@@ -150,23 +151,22 @@
                     </li>
                   </ul>
                 </div>
-                <divs id="collapsediv">
+                <div id="collapsediv">
                   <hr>
                   <div class="project-body">
                     <h4 class="divider">Project Team Members:</h4>
                       <form class="form-inline">
                         <div class="form-group mb-2">
-                          <select class="form-control" id="memeber">
-                            <option>Default select There is a lot to see </option>
+                          <select class="form-control member-dropdown">
                           </select>
                         </div>
                         <div class="form-group mx-sm-3 mb-2">
                          
                         </div>
-                        <button type="submit" class="btn btn-aqua mb-2">Add Member</button>
+                        <button type="submit" class="btn btn-aqua mb-2">Add to Team</button>
                       </form>
                   </div>
-                </divs>
+                </div>
               </div>
             </div>
         </div>
@@ -236,7 +236,17 @@
     }
 
     function renderMemberOptions(members){
+      const selectCollection = document.querySelectorAll(".member-dropdown")
+      selectCollection.forEach(select =>{
+        renderMemberOption(members,select)
+      })
+    }
 
+    function renderMemberOption(members,selectHTMLElement){
+      members.forEach(member=>{
+        const option = `<option value="${member.id}">${member.name} - ${member.role}</option>`
+        selectHTMLElement.insertAdjacentHTML('beforeend',option)
+      })
     }
 
     function renderProjectDivs(projects){
@@ -253,33 +263,34 @@
                           <li class="col-4"><strong>${project.name}</strong></li>
                           <li><button class="btn btn-lightaqua" data-project-id=${project.id}>✎</button></li>
                           <li style="margin-left:2em;"> Due Date: ${project.deadline} </li>
-                          <li style="float: right;"><a class="btn" href="#" data-project-id=${project.id}>⌄</a></li>
+                          <li style="float: right;">
+                          <a class="btn" data-project-id=${project.id}  data-toggle="collapse" href="#collapsediv${project.id}" role="button" aria-expanded="false" aria-controls="collapsediv">
+                          ⌄
+                          </a>
+                          </li>
                         </ul>
+                      </div>
+                      <div id="collapsediv${project.id}" class="collapse">
+                        <hr>
+                        <div class="project-body">
+                          <h4 class="divider">Project Team Members:</h4>
+                            <form class="form-inline">
+                              <div class="form-group mb-2">
+                                <select class="form-control member-dropdown" name="member_id" data-project-id="${project.id}">
+                                  
+                                </select>
+                              </div>
+                              <div class="form-group mx-sm-3 mb-2">
+                              
+                              </div>
+                              <button type="submit" class="btn btn-aqua mb-2">Add to Team</button>
+                            </form>
+                        </div>
                       </div>
                     </div>`;
         divContainer.insertAdjacentHTML("afterbegin",div)
       }
 
-    // function renderProjectDivs(projects){
-    //   let divContainer = document.querySelector(".project-container")
-    //   projects.forEach(project => {
-    //     divContainer.insertAdjacentHTML("before",createProjectDiv(project))
-    //   });
-    // }
-    // function createProjectDiv(project){
-    //   const div = ` <div class="project-card">
-    //                   <div class="project-title">
-    //                     <ul class="project-card-list">
-    //                       <li><strong>${project.name}</strong></li>
-    //                       <li><button class="btn btn-lightaqua" data-project-id=${project.id}>✎</button></li>
-    //                       <li style="margin-left:2em;"> Due Date: ${project.deadline} </li>
-    //                       <li style="float: right;"><a class="btn" href="#" data-project-id=${project.id}>⌄</a></li>
-    //                     </ul>
-    //                   </div>
-    //                 </div>`;
-    //   return div 
-
-    // }
     function createObject(data,method){
       const object = {
         method:method,
