@@ -805,14 +805,14 @@
         const myForm = document.querySelector("#edit-task-form")
         const name = myForm.name.value
         const priority  = myForm.priority.value
-        const task_id = myForm.dataset.taskId
+        const taskId = myForm.dataset.taskId
         const selectedMembers = Array.from(document.querySelectorAll(".i-pick-you"));
         let memberIds = [];
         if (!!selectedMembers.length){
           memberIds  = selectedMembers.map(member=> member.dataset.memberId)
         }
-        serverData = createObject({name:name,priority:priority,memberIds},"PATCH")
-        fetch(`${TASKS_URL}/${task_id}`,serverData)  
+        const serverData = createObject({name:name,priority:priority,memberIds},"PATCH")
+        fetch(`${TASKS_URL}/${taskId}`,serverData)  
         .then(resp => resp.json())
         .then(task=>{
           updateTaskCard(task)
@@ -821,7 +821,14 @@
       })
 
       document.querySelector('#delete-task').addEventListener("click",e=>{
-          
+          const taskId =  document.querySelector("#edit-task-form").dataset.taskId
+          const serverData = createObject({ },"DELETE")
+          fetch(`${TASKS_URL}/${taskId}`,serverData)  
+          .then(resp => resp.json())
+          .then(task=>{
+            document.querySelector(`[data-task-id='${task.id}']`).remove()
+            $("#edit-task-form-modal").modal('hide')
+          })
       })
 
       document.addEventListener("click",e=>{
