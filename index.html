@@ -497,8 +497,8 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-danger">Delete Task</button>
-          <button type="button" class="btn btn-aqua" id="new-task">Save Changes</button>
+          <button type="button" class="btn btn-danger" id="delete-task">Delete Task</button>
+          <button type="button" class="btn btn-aqua" id="edit-task">Save Changes</button>
         </div>
       </div>
     </div>
@@ -751,7 +751,18 @@
       eligibleMembersContainer.insertAdjacentHTML("beforeend",option)
     }
 
+    function updateTaskCard(task){
+      const taskCard = document.querySelector(`[data-task-id='${task.id}']`)
+      taskCard.querySelector("li strong").textContent = task.name
+      taskCard.querySelector("li span").textContent = task.priority
+      const taskMembers =taskCard.querySelector(".task-assign-members")
+      taskMembers.innerHTML = ""
+      taskMembers.innerHTML = renderTaskMembers(task.members)
+    }
+
     function addClickEvents(){
+
+
       document.querySelector("#add-project").addEventListener("click",e=>{
         const form =  document.querySelector("#new-project-form")
         const name = form.name.value;
@@ -790,6 +801,29 @@
    
       })
 
+      document.querySelector("#edit-task").addEventListener("click",e=>{
+        const myForm = document.querySelector("#edit-task-form")
+        const name = myForm.name.value
+        const priority  = myForm.priority.value
+        const task_id = myForm.dataset.taskId
+        const selectedMembers = Array.from(document.querySelectorAll(".i-pick-you"));
+        let memberIds = [];
+        if (!!selectedMembers.length){
+          memberIds  = selectedMembers.map(member=> member.dataset.memberId)
+        }
+        serverData = createObject({name:name,priority:priority,memberIds},"PATCH")
+        fetch(`${TASKS_URL}/${task_id}`,serverData)  
+        .then(resp => resp.json())
+        .then(task=>{
+          updateTaskCard(task)
+          $("#edit-task-form-modal").modal('hide')
+        })
+      })
+
+      document.querySelector('#delete-task').addEventListener("click",e=>{
+          
+      })
+
       document.addEventListener("click",e=>{
         if(e.target.classList.contains("btn-edit-task")){
           const taskId = e.target.dataset.taskId
@@ -806,7 +840,14 @@
           cards.forEach(card=>{
               renderOption(card,"edit-task-eligible-member")
           })
-        
+          const memberIds = Array.from(document.querySelector(`div[data-task-id="${taskId}"]`).querySelectorAll(".task-member-img")).map(x=>x.dataset.taskMemberId)
+          const allProjectMembers = Array.from(document.querySelector(".edit-task-eligible-member").querySelectorAll(".selectable-member"))
+          allProjectMembers.forEach(member =>{
+            if(memberIds.includes(member.dataset.memberId)){
+              member.classList.toggle("i-pick-you")
+            }
+          })
+
           $("#edit-task-form-modal").modal('show')
         }
         if (e.target.classList.contains("btn-task-modal")){
