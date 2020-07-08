@@ -603,7 +603,7 @@
                               <button type="submit" class="btn btn-aqua mb-2">Add to Team</button>
                             </form>
                             <div class="member-cards-container" data-project-id-team-members="${project.id}">
-                              ${renderExistingTeamMembers(project.members,project.id)}
+                              ${renderExistingTeamMembers(project.team_members,project.id)}
                             </div>
                             <hr/>
                             <div class="task-wrapper">
@@ -666,16 +666,19 @@
       return taskCard
     }
 
-    function renderExistingTeamMembers(members,projectId){
+    function renderExistingTeamMembers(teamMembers,projectId){
       let memberCards="";
-      if(!!members){ 
-        members.forEach(member=>{
-          const memberCard = `<div class="member-card" id="team-member-${member.id}-${projectId}" data-member-id="${member.id}">
+      if(!!teamMembers){ 
+        teamMembers.forEach(teamMember=>{
+          const memberCard = `<div class="member-card" id="team-member-${teamMember.member.id}-${projectId}" data-member-id="${teamMember.member.id}">
                               <div class="member-img">
-                                  <img src="${member.image_url}" alt="${member.name}">
+                                  <img src="${teamMember.member.image_url}" alt="${teamMember.member.name}">
+                              </div>
+                              <div class="delete-team-member">
+                                <span class="trash-can" data-team-member-id="${teamMember.id}"> 🗑</span>
                               </div>
                               <div class="member-desc">
-                                <p><strong>${member.name}</strong><br/>${member.role}</p>
+                                <p><strong>${teamMember.member.name}</strong><br/>${teamMember.member.role}</p>
                               </div>
                             </div>`
           memberCards += memberCard
@@ -690,6 +693,9 @@
       const newMemberCard = `<div class="member-card" id="team-member-${member.id}-${project.id}" data-member-id="${member.id}">
                                 <div class="member-img">
                                     <img src="${member.image_url}" alt="${member.name}">
+                                </div>
+                                <div class="delete-team-member">
+                                  <span class="trash-can" data-team-member="${team_member.id}"> 🗑</span>
                                 </div>
                                 <div class="member-desc">
                                   <p><strong>${member.name}</strong><br/>${member.role}</p>
@@ -724,19 +730,6 @@
       .then(members=>renderMemberOption(members,select))
       .catch(err => console.log(err))
     }
-
-    // function renderOption(card){
-    //   const imageUrl  = card.querySelector("img").src
-    //   const memberId  = card.dataset.memberId
-      
-    //   const eligibleMembersContainer = document.querySelector(".task-eligible-member");
-    //   const option = `<div class="member-card" style="border-radius: 50%;">
-    //                     <div class="member-img" style="border-radius: 50%;">
-    //                         <img class="selectable-member" src="${imageUrl}" alt="" data-member-id="${memberId}">
-    //                       </div>
-    //                   </div>`
-    //   eligibleMembersContainer.insertAdjacentHTML("beforeend",option)
-    // }
 
     function renderOption(card,containerClass){
       const imageUrl  = card.querySelector("img").src
@@ -900,6 +893,23 @@
               $('#edit-project-form-modal').modal('hide')
             })
           .catch(err => console.log(err))
+        }
+        if (e.target.className === "trash-can"){
+          const teamMemberId = e.target.dataset.teamMemberId
+          const serverData = createObject({ },"DELETE")
+          fetch(`${TEAM_MEMBERS_URL}/${teamMemberId}`,serverData)  
+          .then(resp => resp.json())
+          .then(teamMember=>{
+            const teamMemberCard = document.querySelector(`#team-member-${teamMember.member_id}-${teamMember.project_id}`)
+            teamMemberCard.remove()
+            const taskCards = Array.from(document.querySelector(`#taskContainer${teamMember.project_id}`).querySelectorAll('.task-card'))       
+            taskCards.forEach(taskCard =>{
+              if(!!taskCard.querySelector(`div[data-task-member-id="${teamMember.member_id}"]`)){
+                taskCard.querySelector(`div[data-task-member-id="${teamMember.member_id}"]`).remove()
+              }
+            })
+            
+          })
         }
 
       })
