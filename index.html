@@ -249,11 +249,11 @@
           <form id="new-project-form">
             <div class="form-group">
               <label for="exampleInputEmail1">Project Name</label>
-              <input type="text" name ="name" class="form-control" id="new-project-name" aria-describedby="emailHelp" placeholder="Enter Project's name">
+              <input type="text" name ="name" class="form-control" id="new-project-name" aria-describedby="emailHelp" placeholder="Enter Project's name" required>
             </div>
             <div class="form-group">
               <label for="exampleInputEmail1">Project Deadline</label>
-              <input type="text" name ="deadline" class="form-control" id="new-project-deadline" aria-describedby="emailHelp" placeholder="Enter Project's deadline">
+              <input type="date" name ="deadline" class="form-control" id="new-project-deadline" aria-describedby="emailHelp" placeholder="Enter Project's deadline" required>
             </div>
     
           </form>
@@ -280,11 +280,11 @@
           <form id="edit-project-form">
             <div class="form-group">
               <label for="exampleInputEmail1">Project Name</label>
-              <input type="text" name ="name" class="form-control" id="edit-project-name" aria-describedby="emailHelp" placeholder="Enter Project's name">
+              <input type="text" name ="name" class="form-control" id="edit-project-name" aria-describedby="emailHelp" placeholder="Enter Project's name" required>
             </div>
             <div class="form-group">
               <label for="exampleInputEmail1">Project Deadline</label>
-              <input type="text" name ="deadline" class="form-control" id="edit-project-deadline" aria-describedby="emailHelp" placeholder="Enter Project's deadline">
+              <input type="date" name ="deadline" class="form-control" id="edit-project-deadline" aria-describedby="emailHelp" placeholder="Enter Project's deadline" required>
             </div>
     
           </form>
@@ -671,6 +671,7 @@
           renderMemberOptionsForNewProject(project.id)
           initializeTooltip()
           $('#new-project-form-modal').modal('hide')
+          form.reset()
         })
         .catch(err=> console.log(err))
       })
@@ -681,6 +682,7 @@
         const priority  = myForm.priority.value
         const projectId = myForm.dataset.projectId
         const selectedMembers = Array.from(document.querySelectorAll(".i-pick-you"));
+        debugger
         let memberIds = [];
         if (!!selectedMembers.length){
           memberIds  = selectedMembers.map(member=> member.dataset.memberId)
@@ -695,6 +697,10 @@
           taskCardContainer.insertAdjacentHTML("beforeend",taskCard)
           initializeTooltip()
           $("#new-task-form-modal").modal('hide')
+          myForm.reset()
+          const eligibleMembersContainer = document.querySelector(".task-eligible-member");
+          eligibleMembersContainer.innerHTML=""
+          
         })
    
       })
@@ -716,6 +722,9 @@
           updateTaskCard(task)
           initializeTooltip()
           $("#edit-task-form-modal").modal('hide')
+          const eligibleMembersContainer = document.querySelector(".edit-task-eligible-member");
+          eligibleMembersContainer.innerHTML=""
+          myForm.reset()
         })
       })
 
@@ -810,6 +819,7 @@
               projectNameStrongTag.textContent = project.name
               projectDeadlineSpanTag.textContent = project.deadline
               $('#edit-project-form-modal').modal('hide')
+              myForm.reset()
             })
           .catch(err => console.log(err))
         }
